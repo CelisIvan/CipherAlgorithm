@@ -1,19 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <string.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-void (const array< array<int, 32>, 32> &mat){
+void shift( array<array<int, 32>, 32> &mat){
     int pos=0, temp, posTemp;
     while(pos<32){
         posTemp=pos;
         while(posTemp){
             // shift a la izquierda
             temp = mat[pos][0];
-            for(int i=0;i<32;i++>)
+            for(int i=0;i<32;i++)
                mat[pos][i] = mat[pos][i+1];
             
             mat[pos][31] = temp;
