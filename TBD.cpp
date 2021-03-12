@@ -2,6 +2,8 @@
 
 using namespace std;
 
+
+//function for rows shifting
 void shift( array<array<int, 32>, 32> &mat){
     int pos=0, temp, posTemp;
     while(pos<32){
@@ -17,7 +19,13 @@ void shift( array<array<int, 32>, 32> &mat){
         }
         pos++;
     }
+}
 
+void transpose(int mat[32][32]){
+
+     for (int i = 0; i < 32; ++i)
+      for (int j = i+1; j < 32; ++j)
+        swap(mat[i][j], mat[j][i]);      
 }
 
 int main(){
