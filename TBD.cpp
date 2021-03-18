@@ -24,18 +24,22 @@ void transpose(int mat[32][32]){
 }
 
 int main(){
-    string message;
-    int block[32][32];
+  unsigned int SIZE = 16;
+  string message;
+  char block[SIZE][SIZE];
 
-    cout << "Please enter the message to cipher\n";
-    getline(cin,message);
-    for(int pos = 0; pos < message.length(); pos++){
-        for(int i=0;i<32;i++){
-            for(int j=0;j<32;j++){
-                block[i][j]=message[pos];
-            }
-        }
+  cout << "Please enter the message to cipher\n";
+  getline(cin,message);
+  int pos = 0;
+  for(int i = 0; i < SIZE; i++){
+    for(int j = 0; j < SIZE; j++){
+      if(pos < message.length())
+        block[i][j]=message[pos];
+      else
+        block[i][j] = '|';
+      pos++;
     }
+  }
 
-    return 0;
+  return 0;
 }
