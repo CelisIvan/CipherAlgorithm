@@ -8,7 +8,6 @@ typedef unsigned int uint;
 const uint SIZE = 10;
 const uint ENCRYPT = 0;
 const uint DECRYPT = 1;
-const uint PRINTABLE_CHARS = 95;
 
 void shift_rows(char mat[SIZE][SIZE], int flag)
 {
@@ -98,39 +97,19 @@ int get_next_printable_char(int value)
   int res = value;
   while (value > 126)
   {
-    value -= PRINTABLE_CHARS;
+    value -= 95;
   }
   return res;
 }
 
-int get_prev_printable_char(int value)
-{
-  int res = value;
-  while (value < 32)
-  {
-    value += PRINTABLE_CHARS;
-  }
-  return res;
-}
-
-string mutate_key(string key, int x, int encrypt)
+string mutate_key(string key, int x)
 {
   string newKey = "";
 
   for (int i = 0; i < key.length(); i++)
   {
-    char letter;
-    int value;
-    if (encrypt == ENCRYPT)
-    {
-      value = key[i] + x + i;
-      letter = static_cast<char>(get_next_printable_char(value));
-    }
-    else
-    {
-      value = key[i] - x - i;
-      letter = static_cast<char>(get_prev_printable_char(value));
-    }
+    int value = key[i] + x + i;
+    char letter = static_cast<char>(get_next_printable_char(value));
     newKey += letter;
   }
   return newKey;
@@ -188,7 +167,7 @@ int main()
       if (pos >= key.length())
       {
         count++;
-        key = mutate_key(key, count, ENCRYPT);
+        key = mutate_key(key, count);
         pos = 0;
       }
       key_block[i][j] = key[pos];
