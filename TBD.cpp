@@ -6,6 +6,8 @@ const unsigned int SIZE_TEXT = 10;
 const unsigned int ENCRYPT = 0;
 const unsigned int DECRYPT = 1;
 
+typedef unsigned char uchar;
+
 //function for rows shifting
 void shift(char mat[SIZE_TEXT][SIZE_TEXT], int flag){
   int temp, posTemp;
@@ -21,40 +23,35 @@ void shift(char mat[SIZE_TEXT][SIZE_TEXT], int flag){
         }
     }
   }else if(flag == DECRYPT){
-    
+    for(int pos = 0; pos < SIZE_TEXT; pos++){
+        for(posTemp = pos; posTemp > 0; posTemp--){
+            // shift a la izquierda
+            temp = mat[pos][SIZE_TEXT-1];
+            for(int i = SIZE_TEXT-1; i >= 0; i--)
+               mat[pos][i] = mat[pos][i-1];
+
+            mat[pos][0] = temp;
+        }
+    }
   }
-    
-    
 }
 
 
-void shift_bits(char mat[SIZE_TEXT][SIZE_TEXT],int flag){
-  if(flag == ENCRYPT){
+void shift_bits(char mat[SIZE_TEXT][SIZE_TEXT]){
+  
+    uchar aux1;
+    uchar aux2;
     for (int i = 0; i < SIZE_TEXT; i++) {
       for (int j = 0; j < SIZE_TEXT; j++) {
-        if(i+j%2 == 0){
-          //Left shift par
-          mat[i][j] = mat[i][j] << (i+j)%8;
-        }else{
-          //Right shift impar
-          mat[i][j] = mat[i][j] >> (i+j)%8;
-        }
-      }
+        aux1 = mat[i][j];
+        aux2 = mat[i][j];
+        // Shift
+        aux1 = aux1 << 4;
+        aux2 = aux2 >> 4;
+        mat[i][j] = aux1 | aux2;
     }
   }
-  else if(flag == DECRYPT){
-    for (int i = 0; i < SIZE_TEXT; i++) {
-      for (int j = 0; j < SIZE_TEXT; j++) {
-        if(i+j%2 == 0){
-          //Left shift par
-          mat[i][j] = mat[i][j] >> (i+j)%8;
-        }else{
-          //Right shift impar
-          mat[i][j] = mat[i][j] << (i+j)%8;
-        }
-      }
-    }
-  }
+  
   
 }
 
@@ -110,7 +107,37 @@ int main(){
       pos++;
     }
   }
+  for (int i = 0; i < SIZE_TEXT; i++)
+  {
+    for (int j = 0; j < SIZE_TEXT; j++)
+    {
+      cout<<block[i][j] << " ";
+    }
+    cout << "\n";
+  }
+  cout << "------------------------------" <<endl;
 
+  shift(block,ENCRYPT);
+  // shift_bits(block);
+  for (int i = 0; i < SIZE_TEXT; i++)
+  {
+    for (int j = 0; j < SIZE_TEXT; j++)
+    {
+      cout<<block[i][j] << " ";
+    }
+    cout << "\n";
+  }
+  // shift_bits(block);
+  shift(block,DECRYPT);
+  cout << "******************" <<endl;
+  for (int i = 0; i < SIZE_TEXT; i++)
+  {
+    for (int j = 0; j < SIZE_TEXT; j++)
+    {
+      cout<<block[i][j] << " ";
+    }
+    cout << "\n";
+  }
   cout << "Please enter the key:\n";
   getline(cin,key);
   pos = 0;
