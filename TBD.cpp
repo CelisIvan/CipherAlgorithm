@@ -133,11 +133,33 @@ void decode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[S
 
 int main()
 {
-  string message, key;
+  string message, key, option_str;
   char block[SIZE][SIZE], key_block[SIZE][SIZE], res_block[SIZE][SIZE];
+  uint option = 0;
+
+  cout << "MENU\n1) Encrypt\n2) Decrypt\n3) Exit\nOption: ";
+  cin >> option;
+
+  char c;
+    while (cin.get(c) && c != '\n')
+        if (!std::isspace(c))
+        {
+            std::cerr << "ERROR unexpected character '" << c << "' found\n";
+            exit(EXIT_FAILURE);
+        }
+
+  if (option == 1)
+    option_str = "encrypt";
+  else if (option == 2)
+    option_str = "decrypt";
+  else
+  {
+    cout << "\nThat was fun, bye!\n";
+    return 0;
+  }
 
   // Get message
-  cout << "Please enter the message to cipher:\n";
+  cout << "Message to " << option_str << ":\n";
   getline(cin, message);
   int pos = 0;
   for (int i = 0; i < SIZE; i++)
@@ -175,37 +197,43 @@ int main()
     }
   }
 
-  // Encode
-  encode(block, key_block, res_block);
-  string encoded = "";
-  for (int i = 0; i < SIZE; i++)
+  if (option == 1)
   {
-    for (int j = 0; j < SIZE; j++)
+    // Encode
+    encode(block, key_block, res_block);
+    string encoded = "";
+    for (int i = 0; i < SIZE; i++)
     {
-      encoded += res_block[i][j];
-    }
-  }
-  cout << encoded << endl;
-  cout << "------------------------------" << endl;
-
-  // Decode
-  decode(res_block, key_block, block);
-  string decoded = "";
-  bool eom = false;
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      if(block[i][j] == char(0)){
-        eom = true;
-        break;
+      for (int j = 0; j < SIZE; j++)
+      {
+        encoded += res_block[i][j];
       }
-      decoded += block[i][j];
     }
-    if(eom)
-      break;
+    cout << "Ecoded message: " << encoded << endl;
   }
-  cout << decoded << endl;
+  
+  else
+  {
+    // Decode
+    decode(block, key_block, res_block);
+    string decoded = "";
+    bool eom = false;
+    for (int i = 0; i < SIZE; i++)
+    {
+      for (int j = 0; j < SIZE; j++)
+      {
+        if (res_block[i][j] == char(0))
+        {
+          eom = true;
+          break;
+        }
+        decoded += res_block[i][j];
+      }
+      if (eom)
+        break;
+    }
+    cout << "Decoded message: " << decoded << endl;
+  }
 
   return 0;
 }
