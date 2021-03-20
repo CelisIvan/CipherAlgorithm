@@ -192,40 +192,24 @@ int main()
         pos = 0;
       }
       key_block[i][j] = key[pos];
-      cout << key_block[i][j] << " ";
       pos++;
     }
-    cout << endl;
   }
-  cout << "------------------------------" << endl;
 
-  // Print message
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      cout << block[i][j] << " ";
-    }
-    cout << endl;
-  }
-  cout << "------------------------------" << endl;
-
-  // Encode and print
+  // Encode
   encode(block, key_block, res_block);
   string encoded = "";
   for (int i = 0; i < SIZE; i++)
   {
     for (int j = 0; j < SIZE; j++)
     {
-      cout << res_block[i][j] << " ";
       encoded += res_block[i][j];
     }
-    cout << endl;
   }
   cout << encoded << endl;
   cout << "------------------------------" << endl;
 
-  // Decode and print
+  // Decode
   decode(res_block, key_block, block);
   string decoded = "";
   bool eom = false;
@@ -233,7 +217,6 @@ int main()
   {
     for (int j = 0; j < SIZE; j++)
     {
-      cout << block[i][j] << " ";
       if(block[i][j] == char(0)){
         eom = true;
         break;
@@ -242,9 +225,8 @@ int main()
     }
     if(eom)
       break;
-    cout << endl;
   }
-  cout << decoded << decoded.length() << endl;
+  cout << decoded << endl;
 
   return 0;
 }
