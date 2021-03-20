@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -68,7 +70,7 @@ void transpose(char mat[SIZE][SIZE])
 
 void bit_operations(char key[SIZE][SIZE], char message[SIZE][SIZE], char newMat[SIZE][SIZE], int encrypt)
 {
-  if (!encrypt)
+  if (encrypt == ENCRYPT)
   {
     for (int i = 0; i < SIZE; i++)
     {
@@ -92,24 +94,13 @@ void bit_operations(char key[SIZE][SIZE], char message[SIZE][SIZE], char newMat[
   }
 }
 
-int get_next_printable_char(int value)
-{
-  int res = value;
-  while (value > 126)
-  {
-    value -= 95;
-  }
-  return res;
-}
-
 string mutate_key(string key, int x)
 {
   string newKey = "";
 
   for (int i = 0; i < key.length(); i++)
   {
-    int value = key[i] + x + i;
-    char letter = static_cast<char>(get_next_printable_char(value));
+    char letter = static_cast<char>(key[i] + x + i);
     newKey += letter;
   }
   return newKey;
@@ -159,8 +150,23 @@ int main()
   }
 
   // Get message
-  cout << "Message to " << option_str << ":\n";
+  cout << "Name of the file with message to " << option_str << ":\n";
   getline(cin, message);
+  string line;
+  ifstream myfile (message);
+  message = "";
+  if (myfile.is_open())
+  {
+    while ( getline (myfile,line) )
+    {
+      message += line;
+      message += '\n';
+    } 
+    myfile.close();
+    message = message.substr(0, message.size()-1);
+  }
+
+  else cout << "Unable to open file";
   int pos = 0;
   for (int i = 0; i < SIZE; i++)
   {
@@ -197,26 +203,26 @@ int main()
     }
   }
 
+  string newMessage = "";
+
   if (option == 1)
   {
     // Encode
     encode(block, key_block, res_block);
-    string encoded = "";
     for (int i = 0; i < SIZE; i++)
     {
       for (int j = 0; j < SIZE; j++)
       {
-        encoded += res_block[i][j];
+        newMessage += res_block[i][j];
       }
     }
-    cout << "Ecoded message: " << encoded << endl;
+    cout << "Ecoded message:\n" << newMessage << endl;
   }
   
   else
   {
     // Decode
     decode(block, key_block, res_block);
-    string decoded = "";
     bool eom = false;
     for (int i = 0; i < SIZE; i++)
     {
@@ -227,13 +233,20 @@ int main()
           eom = true;
           break;
         }
-        decoded += res_block[i][j];
+        newMessage += res_block[i][j];
       }
       if (eom)
         break;
     }
-    cout << "Decoded message: " << decoded << endl;
+    cout << "Decoded message:\n" << newMessage << endl;
   }
+
+  ofstream newfile;
+  newfile.open ("res.txt");
+  newfile << newMessage;
+  newfile.close();
+
+  cout << "\n(The message has been written in res.txt)\n";
 
   return 0;
 }
