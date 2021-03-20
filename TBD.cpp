@@ -51,15 +51,16 @@ void shift_bits(char mat[SIZE][SIZE])
   {
     for (int j = 0; j < SIZE; j++)
     {
-      uchar aux1 = mat[i][j] << 4;
-      uchar aux2 = mat[i][j] >> 4;
-
-      mat[i][j] = aux1 | aux2;
+      uchar aux1 = mat[i][j], aux2 = mat[i][j];
+      aux1 <<= 4;
+      aux2 >>= 4;
+      uchar res = aux1 | aux2;
+      mat[i][j] = res;
     }
   }
 }
 
-void transpose(int mat[SIZE][SIZE])
+void transpose(char mat[SIZE][SIZE])
 {
   for (int i = 0; i < SIZE; ++i)
     for (int j = i + 1; j < SIZE; ++j)
@@ -95,7 +96,8 @@ void bit_operations(char key[SIZE][SIZE], char message[SIZE][SIZE], char newMat[
 int get_next_printable_char(int value)
 {
   int res = value;
-  while(value > 126) {
+  while (value > 126)
+  {
     value -= PRINTABLE_CHARS;
   }
   return res;
@@ -104,7 +106,8 @@ int get_next_printable_char(int value)
 int get_prev_printable_char(int value)
 {
   int res = value;
-  while(value < 32) {
+  while (value < 32)
+  {
     value += PRINTABLE_CHARS;
   }
   return res;
@@ -118,7 +121,7 @@ string mutate_key(string key, int x, int encrypt)
   {
     char letter;
     int value;
-    if(encrypt == ENCRYPT)
+    if (encrypt == ENCRYPT)
     {
       value = key[i] + x + i;
       letter = static_cast<char>(get_next_printable_char(value));
@@ -133,10 +136,28 @@ string mutate_key(string key, int x, int encrypt)
   return newKey;
 }
 
+void encode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[SIZE][SIZE])
+{
+  shift_rows(block, ENCRYPT);
+  shift_bits(block);
+  transpose(block);
+  bit_operations(key_block, block, res_block, ENCRYPT);
+}
+
+void decode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[SIZE][SIZE])
+{
+  bit_operations(key_block, block, res_block, DECRYPT);
+  transpose(res_block);
+  shift_bits(res_block);
+  shift_rows(res_block, DECRYPT);
+}
+
 int main()
 {
   string message, key;
-  char block[SIZE][SIZE], key_block[SIZE][SIZE];
+  char block[SIZE][SIZE], key_block[SIZE][SIZE], res_block[SIZE][SIZE];
+
+  // Get message
   cout << "Please enter the message to cipher:\n";
   getline(cin, message);
   int pos = 0;
@@ -147,44 +168,17 @@ int main()
       if (pos < message.length())
         block[i][j] = message[pos];
       else
-        block[i][j] = '|';
+        block[i][j] = char(0);
       pos++;
     }
   }
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      cout << block[i][j] << " ";
-    }
-    cout << "\n";
-  }
-  cout << "------------------------------" << endl;
 
-  shift_rows(block, ENCRYPT);
-  // shift_bits(block);
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      cout << block[i][j] << " ";
-    }
-    cout << "\n";
-  }
-  // shift_bits(block);
-  shift_rows(block, DECRYPT);
-  cout << "******************" << endl;
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      cout << block[i][j] << " ";
-    }
-    cout << "\n";
-  }
-
+  // Get key
   cout << "Please enter the key:\n";
   getline(cin, key);
+  cout << "------------------------------" << endl;
+
+  // Mutate key
   pos = 0;
   int count = 0;
   for (int i = 0; i < SIZE; i++)
@@ -194,15 +188,63 @@ int main()
       if (pos >= key.length())
       {
         count++;
-        key = mutate_key(key, count);
+        key = mutate_key(key, count, ENCRYPT);
         pos = 0;
       }
       key_block[i][j] = key[pos];
-      cout << key_block[i][j];
+      cout << key_block[i][j] << " ";
       pos++;
     }
     cout << endl;
   }
+  cout << "------------------------------" << endl;
+
+  // Print message
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE; j++)
+    {
+      cout << block[i][j] << " ";
+    }
+    cout << endl;
+  }
+  cout << "------------------------------" << endl;
+
+  // Encode and print
+  encode(block, key_block, res_block);
+  string encoded = "";
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE; j++)
+    {
+      cout << res_block[i][j] << " ";
+      encoded += res_block[i][j];
+    }
+    cout << endl;
+  }
+  cout << encoded << endl;
+  cout << "------------------------------" << endl;
+
+  // Decode and print
+  decode(res_block, key_block, block);
+  string decoded = "";
+  bool eom = false;
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE; j++)
+    {
+      cout << block[i][j] << " ";
+      if(block[i][j] == char(0)){
+        eom = true;
+        break;
+      }
+      decoded += block[i][j];
+    }
+    if(eom)
+      break;
+    cout << endl;
+  }
+  cout << decoded << decoded.length() << endl;
 
   return 0;
 }
