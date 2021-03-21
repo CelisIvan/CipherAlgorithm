@@ -11,7 +11,7 @@ const uint SIZE = 10;
 const uint ENCRYPT = 0;
 const uint DECRYPT = 1;
 
-void shift_rows(char mat[SIZE][SIZE], int flag)
+void shift_rows(uchar mat[SIZE][SIZE], int flag)
 {
   int temp, posTemp;
   if (flag == ENCRYPT)
@@ -46,7 +46,7 @@ void shift_rows(char mat[SIZE][SIZE], int flag)
   }
 }
 
-void shift_bits(char mat[SIZE][SIZE])
+void shift_bits(uchar mat[SIZE][SIZE])
 {
   for (int i = 0; i < SIZE; i++)
   {
@@ -61,14 +61,14 @@ void shift_bits(char mat[SIZE][SIZE])
   }
 }
 
-void transpose(char mat[SIZE][SIZE])
+void transpose(uchar mat[SIZE][SIZE])
 {
   for (int i = 0; i < SIZE; ++i)
     for (int j = i + 1; j < SIZE; ++j)
       swap(mat[i][j], mat[j][i]);
 }
 
-void bit_operations(char key[SIZE][SIZE], char message[SIZE][SIZE], char newMat[SIZE][SIZE], int encrypt)
+void bit_operations(uchar key[SIZE][SIZE], uchar message[SIZE][SIZE], uchar newMat[SIZE][SIZE], int encrypt)
 {
   if (encrypt == ENCRYPT)
   {
@@ -100,13 +100,13 @@ string mutate_key(string key, int x)
 
   for (int i = 0; i < key.length(); i++)
   {
-    char letter = static_cast<char>(key[i] + x + i);
+    uchar letter = static_cast<uchar>(key[i] + x + i);
     newKey += letter;
   }
   return newKey;
 }
 
-void encode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[SIZE][SIZE])
+void encode(uchar block[SIZE][SIZE], uchar key_block[SIZE][SIZE], uchar res_block[SIZE][SIZE])
 {
   shift_rows(block, ENCRYPT);
   shift_bits(block);
@@ -114,7 +114,7 @@ void encode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[S
   bit_operations(key_block, block, res_block, ENCRYPT);
 }
 
-void decode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[SIZE][SIZE])
+void decode(uchar block[SIZE][SIZE], uchar key_block[SIZE][SIZE], uchar res_block[SIZE][SIZE])
 {
   bit_operations(key_block, block, res_block, DECRYPT);
   transpose(res_block);
@@ -125,19 +125,19 @@ void decode(char block[SIZE][SIZE], char key_block[SIZE][SIZE], char res_block[S
 int main()
 {
   string message, key, option_str;
-  char block[SIZE][SIZE], key_block[SIZE][SIZE], res_block[SIZE][SIZE];
+  uchar block[SIZE][SIZE], key_block[SIZE][SIZE], res_block[SIZE][SIZE];
   uint option = 0;
 
   cout << "MENU\n1) Encrypt\n2) Decrypt\n3) Exit\nOption: ";
   cin >> option;
 
   char c;
-    while (cin.get(c) && c != '\n')
-        if (!std::isspace(c))
-        {
-            std::cerr << "ERROR unexpected character '" << c << "' found\n";
-            exit(EXIT_FAILURE);
-        }
+  while (cin.get(c) && c != '\n')
+    if (!std::isspace(c))
+    {
+      std::cerr << "ERROR unexpected character '" << c << "' found\n";
+      exit(EXIT_FAILURE);
+    }
 
   if (option == 1)
     option_str = "encrypt";
@@ -153,20 +153,22 @@ int main()
   cout << "Name of the file with message to " << option_str << ":\n";
   getline(cin, message);
   string line;
-  ifstream myfile (message);
+  ifstream myfile(message);
   message = "";
   if (myfile.is_open())
   {
-    while ( getline (myfile,line) )
+    while (getline(myfile, line))
     {
       message += line;
       message += '\n';
-    } 
+    }
     myfile.close();
-    message = message.substr(0, message.size()-1);
+    message = message.substr(0, message.size() - 1);
   }
 
-  else cout << "Unable to open file";
+  else
+    cout << "Unable to open file";
+
   int pos = 0;
   for (int i = 0; i < SIZE; i++)
   {
@@ -175,7 +177,7 @@ int main()
       if (pos < message.length())
         block[i][j] = message[pos];
       else
-        block[i][j] = char(0);
+        block[i][j] = uchar(0);
       pos++;
     }
   }
@@ -216,9 +218,10 @@ int main()
         newMessage += res_block[i][j];
       }
     }
-    cout << "Ecoded message:\n" << newMessage << endl;
+    cout << "Ecoded message:\n"
+         << newMessage << endl;
   }
-  
+
   else
   {
     // Decode
@@ -228,7 +231,7 @@ int main()
     {
       for (int j = 0; j < SIZE; j++)
       {
-        if (res_block[i][j] == char(0))
+        if (res_block[i][j] == uchar(0))
         {
           eom = true;
           break;
@@ -238,13 +241,14 @@ int main()
       if (eom)
         break;
     }
-    cout << "Decoded message:\n" << newMessage << endl;
+    cout << "Decoded message:\n"
+         << newMessage << endl;
   }
 
-  ofstream newfile;
-  newfile.open ("res.txt");
-  newfile << newMessage;
-  newfile.close();
+  ofstream resfile;
+  resfile.open("res.txt");
+  resfile << newMessage;
+  resfile.close();
 
   cout << "\n(The message has been written in res.txt)\n";
 
