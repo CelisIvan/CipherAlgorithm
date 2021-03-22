@@ -75,7 +75,8 @@ void bit_operations(uchar key[SIZE][SIZE], uchar message[SIZE][SIZE], uchar newM
     for (int i = 0; i < SIZE; i++)
     {
       for (int j = 0; j < SIZE; j++)
-      {
+      { 
+        message[i][j] = message[i][j] + key[i][j];
         int temp = message[i][j] ^ key[i][j];
         newMat[i][j] = ~temp;
       }
@@ -87,8 +88,10 @@ void bit_operations(uchar key[SIZE][SIZE], uchar message[SIZE][SIZE], uchar newM
     {
       for (int j = 0; j < SIZE; j++)
       {
+        
         int temp = ~message[i][j];
         newMat[i][j] = temp ^ key[i][j];
+        newMat[i][j] = newMat[i][j] - key[i][j];
       }
     }
   }
