@@ -1,3 +1,7 @@
+//Sandra Roman
+//Ivan Celis
+//Juan David Torres
+
 #include <bits/stdc++.h>
 #include <iostream>
 #include <fstream>
