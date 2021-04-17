@@ -213,7 +213,12 @@ int main()
   if (option == 1)
   {
     // Encode
-    encode(block, key_block, res_block);
+    for (int i = 0; i < 10; i++)
+    {
+      encode(block, key_block, res_block);
+    }
+    
+    
     for (int i = 0; i < SIZE; i++)
     {
       for (int j = 0; j < SIZE; j++)
@@ -228,7 +233,10 @@ int main()
   else
   {
     // Decode
-    decode(block, key_block, res_block);
+    for (int i = 0; i < 10; i++)
+    {
+      decode(block, key_block, res_block);
+    }
     bool eom = false;
     for (int i = 0; i < SIZE; i++)
     {
